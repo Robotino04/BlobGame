@@ -62,7 +62,7 @@ internal sealed class Theme : IDisposable, IEquatable<Theme?> {
 
         Debug.WriteLine($"Loading theme {Name}");
         MemoryStream ms = new MemoryStream();
-        using FileStream fs = new FileStream(ThemeFilePath, FileMode.Open);
+        using FileStream fs = new FileStream(ThemeFilePath, FileMode.Open, FileAccess.Read);
 
         fs.CopyTo(ms);
         ms.Position = 0;

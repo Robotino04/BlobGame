@@ -49,8 +49,28 @@
     </None>
   </ItemGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="&quot;$(SolutionDir)ThemePacker/bin/Debug/net7.0/ThemePacker&quot; $(ProjectDir)Resources/Themes/ $(ProjectDir)Resources/" />
+  <!--<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="&quot;$(ProjectDir)../ThemePacker/bin/Debug/net7.0/ThemePacker&quot; $(ProjectDir)Resources/Themes/ $(ProjectDir)Resources/" />
   </Target>
+ -->
+
+  <ItemGroup>
+      <ThemeFile Include="$(ProjectDir)Resources/Themes/*/colors.json"/>
+  </ItemGroup>
+
+  <Target Name="CreateMainDat" AfterTargets="Build" Outputs="%(ThemeFile.Identity)">
+      <PropertyGroup>
+        <ComponentDir>@(ThemeFile->'%(rootdir)%(directory)')</ComponentDir>
+        <ComponentName>$(ComponentDir.TrimEnd('/'))</ComponentName>
+      </PropertyGroup>
+
+        <!-- <Exec Command="echo Q $(ComponentName) QQQQQQQQQQQQQQQQQQ $(ComponentDir)" /> -->
+
+        <ZipDirectory
+            SourceDirectory="$(ComponentDir)"
+            DestinationFile="$(ComponentName).theme"
+            Overwrite="true"
+        />
+    </Target>
 
 </Project>
