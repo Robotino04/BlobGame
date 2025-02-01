@@ -9,13 +9,14 @@ in
     projectFile = "BlobGame/BlobGame.csproj";
     nugetDeps = ./deps.nix;
 
-    dotnet-sdk = pkgs.dotnetCorePackages.sdk_7_0;
-    dotnet-runtime = pkgs.dotnetCorePackages.runtime_7_0;
+    dotnet-sdk = pkgs.dotnetCorePackages.sdk_9_0;
+    dotnet-runtime = pkgs.dotnetCorePackages.runtime_9_0;
 
     runtimeDeps = with pkgs; [
       xorg.libX11
       xorg.libXi
-      glfw
+      glfw2
+      glfw3
       libGLU
       libGL
       alsa-lib
@@ -24,8 +25,6 @@ in
     nativeBuildInputs = [
       pkgs.makeWrapper
     ];
-
-    dotnetInstallFlags = ["--framework" "net7.0"];
 
     fixupPhase = ''
       mkdir -p $out/bin/Resources/
