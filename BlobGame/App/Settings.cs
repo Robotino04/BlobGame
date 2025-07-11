@@ -1,6 +1,6 @@
 ﻿using BlobGame.Audio;
 using BlobGame.ResourceHandling;
-using Raylib_CsLo;
+using ZeroElectric.Vinculum;
 using System.Text.Json;
 
 namespace BlobGame.App;

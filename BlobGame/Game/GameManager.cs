@@ -6,7 +6,7 @@ using BlobGame.Game.Util;
 using BlobGame.ResourceHandling;
 using BlobGame.ResourceHandling.Resources;
 using BlobGame.Util;
-using Raylib_CsLo;
+using ZeroElectric.Vinculum;
 using System.Numerics;
 
 namespace BlobGame.Game;
@@ -122,7 +122,7 @@ public static class GameManager {
     }
 
     internal static void SetScene(Scene scene) {
-        lock (SceneLock){
+        lock (SceneLock) {
             Scene.Unload();
             GuiManager.ResetElements();
             WasSceneLoaded = false;

@@ -1,6 +1,6 @@
 ﻿using BlobGame.ResourceHandling;
 using BlobGame.ResourceHandling.Resources;
-using Raylib_CsLo;
+using ZeroElectric.Vinculum;
 using System.Diagnostics;
 
 namespace BlobGame.Drawing;
@@ -65,13 +65,13 @@ internal static class Renderer {
 
         RlGl.rlPushMatrix();
 
-        RlGl.rlScalef(Application.WorldToScreenMultiplierX, Application.WorldToScreenMultiplierY, 1);
+        RlGl.rlScalef(Application.Instance.WorldToScreenMultiplierX, Application.Instance.WorldToScreenMultiplierY, 1);
 
         Game.GameManager.Draw(dT);
 
         RlGl.rlPopMatrix();
 
-        if (Application.DRAW_DEBUG) {
+        if (Application.Instance.DrawDebug) {
             int fps = Raylib.GetFPS();
             Raylib.DrawText(fps.ToString(), 10, 10, 16, Raylib.LIME);
 

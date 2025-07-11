@@ -1,7 +1,7 @@
 ﻿using BlobGame.App;
 using BlobGame.Game.GameModes;
 using BlobGame.Game.Scenes;
-using Raylib_CsLo;
+using ZeroElectric.Vinculum;
 using System.Numerics;
 
 namespace BlobGame.Game.GameControllers;

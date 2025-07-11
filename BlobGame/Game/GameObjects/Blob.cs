@@ -3,7 +3,7 @@ using BlobGame.ResourceHandling;
 using BlobGame.ResourceHandling.Resources;
 using nkast.Aether.Physics2D.Common;
 using nkast.Aether.Physics2D.Dynamics;
-using Raylib_CsLo;
+using ZeroElectric.Vinculum;
 
 namespace BlobGame.Game.GameObjects;
 
@@ -68,7 +68,7 @@ internal sealed class Blob : GameObject {
             new System.Numerics.Vector2(Data.TextureScale.X, Data.TextureScale.Y),
             0);
 
-        if (Application.DRAW_DEBUG) {
+        if (Application.Instance.DrawDebug) {
             if (Data.AsCircle(out float radius))
                 Raylib.DrawCircleLines(0, 0, radius * POSITION_MULTIPLIER, Raylib.BLUE);
             else if (Data.AsPolygon(out Vertices vertices)) {

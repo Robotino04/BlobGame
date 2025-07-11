@@ -1,6 +1,6 @@
 ﻿using BlobGame.App;
 using BlobGame.Game.GameModes;
-using Raylib_CsLo;
+using ZeroElectric.Vinculum;
 
 namespace BlobGame.Game.GameControllers;
 internal sealed class KeyboardController : IGameController {

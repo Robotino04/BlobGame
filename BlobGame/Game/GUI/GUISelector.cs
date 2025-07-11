@@ -2,7 +2,7 @@
 using BlobGame.Audio;
 using BlobGame.Drawing;
 using BlobGame.Util;
-using Raylib_CsLo;
+using ZeroElectric.Vinculum;
 using System.Numerics;
 
 namespace BlobGame.Game.Gui;
@@ -33,6 +33,10 @@ internal class GuiSelector : InteractiveGuiElement {
 
     private GuiSelector(float x, float y, float w, float h, SelectionElement[] elements, int selectedIndex, Vector2? pivot = null)
         : base(x, y, w, h, pivot) {
+        if (elements.Length == 0) {
+            throw new ArgumentOutOfRangeException(nameof(elements), message: "GuiSelector must always have at least one element");
+        }
+
         float buttonSize = MathF.Min(w, h);
 
         Elements = elements;

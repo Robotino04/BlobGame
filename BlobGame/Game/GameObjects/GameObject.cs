@@ -1,5 +1,5 @@
 ﻿using nkast.Aether.Physics2D.Dynamics;
-using Raylib_CsLo;
+using ZeroElectric.Vinculum;
 using Vector2 = nkast.Aether.Physics2D.Common.Vector2;
 
 namespace BlobGame.Game;

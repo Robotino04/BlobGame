@@ -1,4 +1,4 @@
-﻿using Raylib_CsLo;
+﻿using ZeroElectric.Vinculum;
 using System.Numerics;
 using static BlobGame.App.Input;
 
@@ -103,8 +103,8 @@ public static class Input {
 
     public static Vector2 ScreenToWorld(Vector2 screenPos) {
         return new Vector2(
-            screenPos.X / Application.WorldToScreenMultiplierX,
-            screenPos.Y / Application.WorldToScreenMultiplierY);
+            screenPos.X / Application.Instance.WorldToScreenMultiplierX,
+            screenPos.Y / Application.Instance.WorldToScreenMultiplierY);
     }
 
     /// <summary>

@@ -63,7 +63,7 @@ internal class SettingsScene : Scene {
         (GuiSelector screenModeSelector, GuiLabel screenModeLabel) = CreateSettingsEntry(
             "Screen Mode", xOffset,
             Enum.GetValues<eScreenMode>().Select(sm => new SelectionElement(sm.ToString(), sm)).ToArray(),
-            Array.FindIndex(Enum.GetValues<eScreenMode>(), sm => sm == Application.Settings.ScreenMode));
+            Array.FindIndex(Enum.GetValues<eScreenMode>(), sm => sm == Application.Instance.Settings.ScreenMode));
         ScreenModeLabel = screenModeLabel;
         ScreenModeSelector = screenModeSelector;
         xOffset += 0.1f;
@@ -71,7 +71,7 @@ internal class SettingsScene : Scene {
         (GuiSelector resolutionSelector, GuiLabel resolutionLabel) = CreateSettingsEntry(
             "Resolution", xOffset,
             Settings.AVAILABLE_RESOLUTIONS.Select(res => new SelectionElement($"{res.w}x{res.h}", res)).ToArray(),
-            Array.FindIndex<(int, int)>(Settings.AVAILABLE_RESOLUTIONS.ToArray(), r => r.Equals(Application.Settings.GetCurrentResolution())));
+            Array.FindIndex<(int, int)>(Settings.AVAILABLE_RESOLUTIONS.ToArray(), r => r.Equals(Application.Instance.Settings.GetCurrentResolution())));
         ResolutionLabel = resolutionLabel;
         ResolutionSelector = resolutionSelector;
         xOffset += 0.1f;
@@ -79,7 +79,7 @@ internal class SettingsScene : Scene {
         (GuiSelector musicVolumeSelector, GuiLabel musicVolumeLabel) = CreateSettingsEntry(
             "Music Volume", xOffset,
             Enumerable.Range(0, 11).Select(i => new SelectionElement($"{i * 10f}%", i * 10)).ToArray(),
-            Application.Settings.MusicVolume / 10);
+            Application.Instance.Settings.MusicVolume / 10);
         MusicVolumeLabel = musicVolumeLabel;
         MusicVolumeSelector = musicVolumeSelector;
         xOffset += 0.1f;
@@ -87,15 +87,15 @@ internal class SettingsScene : Scene {
         (GuiSelector soundVolumeSelector, GuiLabel soundVolumeLabel) = CreateSettingsEntry(
             "Sound Volume", xOffset,
             Enumerable.Range(0, 11).Select(i => new SelectionElement($"{i * 10f}%", i * 10)).ToArray(),
-            Application.Settings.SoundVolume / 10);
+            Application.Instance.Settings.SoundVolume / 10);
         SoundVolumeLabel = soundVolumeLabel;
         SoundVolumeSelector = soundVolumeSelector;
         xOffset += 0.1f;
 
         SelectionElement[] availableThemes = Directory.GetFiles(Files.GetResourceFilePath())
-            .Where(file => file.EndsWith(".theme"))
+            .Where(file => file.EndsWith(".dat"))
             .Select(file => new SelectionElement($"{Path.GetFileNameWithoutExtension(file)}", Path.GetFileNameWithoutExtension(file))).ToArray();
-        int selectedThemeIndex = Array.FindIndex(availableThemes, e => e.Element.Equals(Application.Settings.GetCurrentThemeName()));
+        int selectedThemeIndex = Array.FindIndex(availableThemes, e => e.Element.Equals(Application.Instance.Settings.GetCurrentThemeName()));
 
         (GuiSelector themeSelector, GuiLabel themeLabel) = CreateSettingsEntry(
             "Theme", xOffset,
@@ -143,7 +143,7 @@ internal class SettingsScene : Scene {
         if (ResetScoreButton.IsClicked)
             GameManager.Scoreboard.Reset();
         if (ResetTutorialButton.IsClicked)
-            Application.Settings.ResetTutorial();
+            Application.Instance.Settings.ResetTutorial();
     }
 
     private void ApplySettings() {
@@ -155,29 +155,29 @@ internal class SettingsScene : Scene {
         string theme = (string)ThemeSelector.SelectedElement.Element;
 
         bool needsRestart = false;
-        if (resolution != Application.Settings.GetCurrentResolution()) {
-            Application.Settings.SetResolution(resolution.w, resolution.h);
+        if (resolution != Application.Instance.Settings.GetCurrentResolution()) {
+            Application.Instance.Settings.SetResolution(resolution.w, resolution.h);
             needsRestart = true;
         }
-        if (screenMode != Application.Settings.ScreenMode) {
-            Application.Settings.SetScreenMode(screenMode);
+        if (screenMode != Application.Instance.Settings.ScreenMode) {
+            Application.Instance.Settings.SetScreenMode(screenMode);
             needsRestart = true;
         }
         //if (monitor != Application.Settings.GetCurrentMonitor()) {
         //    Application.Settings.SetMonitor(monitor);
         //    needsRestart = true;
         //}
-        if (soundVolume != Application.Settings.SoundVolume)
-            Application.Settings.SoundVolume = soundVolume;
-        if (musicVolume != Application.Settings.MusicVolume)
-            Application.Settings.MusicVolume = musicVolume;
-        if (theme != Application.Settings.GetCurrentThemeName())
-            Application.Settings.SetTheme(theme);
+        if (soundVolume != Application.Instance.Settings.SoundVolume)
+            Application.Instance.Settings.SoundVolume = soundVolume;
+        if (musicVolume != Application.Instance.Settings.MusicVolume)
+            Application.Instance.Settings.MusicVolume = musicVolume;
+        if (theme != Application.Instance.Settings.GetCurrentThemeName())
+            Application.Instance.Settings.SetTheme(theme);
 
 
         if (needsRestart) {
             // This is needed because if the resolution, screen mode or monitor is change the UI is all fricked up
-            Application.Exit();
+            Application.Instance.Exit();
             Process.Start(Environment.ProcessPath, string.Join(" ", Environment.GetCommandLineArgs()));
         }
     }

@@ -1,7 +1,7 @@
 ﻿using BlobGame.ResourceHandling;
 using BlobGame.ResourceHandling.Resources;
 using BlobGame.Util;
-using Raylib_CsLo;
+using ZeroElectric.Vinculum;
 using System.Collections.Concurrent;
 
 namespace BlobGame.Audio;
@@ -92,7 +92,7 @@ internal static class AudioManager {
 
         SoundActionQueue.Add(() => {
             PlayingSounds[name] = sound;
-            Raylib.SetSoundVolume(sound.Resource, Application.Settings.SoundVolume / 100f);
+            Raylib.SetSoundVolume(sound.Resource, Application.Instance.Settings.SoundVolume / 100f);
             Raylib.PlaySound(sound.Resource);
         });
     }
@@ -126,8 +126,8 @@ internal static class AudioManager {
     /// </summary>
     /// <param name="v">Volume value. Must be in [0, 100]</param>
     internal static void SetSoundVolume(int v) {
-        if (Application.Settings.SoundVolume != v) {
-            Application.Settings.SoundVolume = v;
+        if (Application.Instance.Settings.SoundVolume != v) {
+            Application.Instance.Settings.SoundVolume = v;
             return;
         }
 
@@ -162,7 +162,7 @@ internal static class AudioManager {
             //Debug.WriteLine($"Playing {name} ({Raylib.GetMusicTimeLength(music.Resource)}s)");
             PlayingMusic[name] = music;
             Raylib.PlayMusicStream(music.Resource);
-            Raylib.SetMusicVolume(music.Resource, MUSIC_VOLUME_MODIFIER * Application.Settings.MusicVolume / 100f);
+            Raylib.SetMusicVolume(music.Resource, MUSIC_VOLUME_MODIFIER * Application.Instance.Settings.MusicVolume / 100f);
         });
     }
 
@@ -195,8 +195,8 @@ internal static class AudioManager {
     /// </summary>
     /// <param name="v">Volume value. Must be in [0, 100]</param>
     internal static void SetMusicVolume(int v) {
-        if (Application.Settings.MusicVolume != v) {
-            Application.Settings.MusicVolume = v;
+        if (Application.Instance.Settings.MusicVolume != v) {
+            Application.Instance.Settings.MusicVolume = v;
             return;
         }
 

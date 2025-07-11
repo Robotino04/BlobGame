@@ -7,7 +7,7 @@ using BlobGame.Game.Gui;
 using BlobGame.Game.Tutorial;
 using BlobGame.ResourceHandling;
 using BlobGame.ResourceHandling.Resources;
-using Raylib_CsLo;
+using ZeroElectric.Vinculum;
 using System.Globalization;
 using System.Numerics;
 
@@ -124,7 +124,7 @@ internal sealed partial class GameScene : Scene {
         Splats = new();
 
         string gameModeKey = IGameMode.GameModeTypes.Where(k => k.Value == Game.GetType()).Select(k => k.Key).Single();
-        if (gameModeKey != null && Application.Settings.GetTutorialEnabled(gameModeKey))
+        if (gameModeKey != null && Application.Instance.Settings.GetTutorialEnabled(gameModeKey))
             Tutorial = new TutorialDisplay(this, gameModeKey);
 
         SpashScreenTextures = new();
@@ -211,7 +211,7 @@ internal sealed partial class GameScene : Scene {
 
             if (Tutorial.IsFinished) {
                 string gameModeKey = IGameMode.GameModeTypes.Where(k => k.Value == Game.GetType()).Select(k => k.Key).Single();
-                Application.Settings.SetTutorialEnabled(gameModeKey, false);
+                Application.Instance.Settings.SetTutorialEnabled(gameModeKey, false);
 
                 if (SpashScreenTextures.Count > 0)
                     AudioManager.PlaySound($"{SpashScreenTextures[0].Key}_sound");
@@ -364,8 +364,8 @@ internal sealed partial class GameScene : Scene {
     /// <param name="pos"></param>
     /// <returns></returns>
     public static Vector2 ScreenToArenaPosition(Vector2 pos) {
-        float x = pos.X / Application.WorldToScreenMultiplierX - ARENA_OFFSET_X + IGameMode.ARENA_WIDTH / 2;
-        float y = pos.Y / Application.WorldToScreenMultiplierY - ARENA_OFFSET_Y;
+        float x = pos.X / Application.Instance.WorldToScreenMultiplierX - ARENA_OFFSET_X + IGameMode.ARENA_WIDTH / 2;
+        float y = pos.Y / Application.Instance.WorldToScreenMultiplierY - ARENA_OFFSET_Y;
         return new Vector2(x, y);
     }
 }

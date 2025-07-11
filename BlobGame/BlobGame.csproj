@@ -3,15 +3,64 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>12.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
 
-    <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows> 
-    <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux> 
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <EnableAggressiveTrimming>true</EnableAggressiveTrimming>
+    <RunAOTCompilation>true</RunAOTCompilation>
+    <TrimMode>partial</TrimMode>
+    <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+
+    <PublishTrimmed>true</PublishTrimmed>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <DebugType>embedded</DebugType>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+
+
+    <!-- BEGIN_WASM_SETTINGS -->
+    <!-- https://github.com/dotnet/runtime/blob/main/src/mono/wasm/build/WasmApp.Common.targets -->
+    <WasmMainJSPath>web_files/main.js</WasmMainJSPath>
+    <WasmBuildNative>true</WasmBuildNative>
+    <WasmNativeStrip>false</WasmNativeStrip>
+    <WasmAllowUndefinedSymbols>true</WasmAllowUndefinedSymbols>
+    <WasmEnableExceptionHandling>false</WasmEnableExceptionHandling>
+    <WasmInitialHeapSize>128MB</WasmInitialHeapSize>
+    <WasmEmitSymbolMap>true</WasmEmitSymbolMap>
+    <!-- END_WASM_SETTINGS -->
+
+    <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
+    <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon> 
     <AssemblyName>Toasted</AssemblyName> 
   </PropertyGroup>
+
+  <ItemGroup>
+    <WasmExtraFilesToDeploy Include="web_files/*" />
+        <WasmExtraFilesToDeploy Include="Resources/icon.ico" TargetPath="favicon.ico" />
+    <WasmExtraFilesToDeploy Include="Resources/Themes/MelbaToast/Fonts/gui.otf" TargetPath="gui.otf" />
+    <WasmExtraFilesToDeploy Include="Resources/Themes/MelbaToast/Textures/button_up.png" TargetPath="button.png" />
+    <NativeFileReference Include="raylib.a" />
+    <WasmFilesToIncludeInFileSystem Include="Resources/Themes/MelbaToast.dat" TargetPath="Resources/MelbaToast.dat" />
+  </ItemGroup>
+
+  <Choose>
+    <When Condition=" $(Configuration) == 'Debug' ">
+      <PropertyGroup>
+        <EmccFlags>-sFULL_ES3 -sERROR_ON_UNDEFINED_SYMBOLS=0 -sUSE_GLFW=3 -sVERBOSE=1 -Wbad-function-cast -Wcast-function-type -O2 -g4 -sALLOW_MEMORY_GROWTH=1 -lexports.js</EmccFlags>
+      </PropertyGroup>
+    </When>
+    <When Condition=" $(Configuration) == 'Release' ">
+      <PropertyGroup>
+        <EmccFlags>-sFULL_ES3 -sERROR_ON_UNDEFINED_SYMBOLS=0 -sUSE_GLFW=3 -g4 -O4 -sALLOW_MEMORY_GROWTH=1 -lexports.js</EmccFlags>
+      </PropertyGroup>
+    </When>
+  </Choose>
 
   <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
     <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
@@ -31,46 +80,32 @@
 
   <ItemGroup>
     <PackageReference Include="Aether.Physics2D" Version="2.0.0" />
-    <PackageReference Include="Raylib-CsLo" Version="4.2.0.9" />
+    <PackageReference Include="Raylib-CSharp-Vinculum" Version="5.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\HowTo.txt">
+    <None Update="Resources/HowTo.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\MelbaToast.theme">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\Themes\default\colors.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\example.theme">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
-  <!--<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="&quot;$(ProjectDir)../ThemePacker/bin/Debug/net7.0/ThemePacker&quot; $(ProjectDir)Resources/Themes/ $(ProjectDir)Resources/" />
-  </Target>
- -->
+  <ItemGroup>
+      <None Include="Resources/Themes/MelbaToast.dat">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <TargetPath>Resources/%(Filename)%(Extension)</TargetPath>
+      </None>
+  </ItemGroup>
 
   <ItemGroup>
       <ThemeFile Include="$(ProjectDir)Resources/Themes/*/colors.json"/>
   </ItemGroup>
 
-  <Target Name="CreateMainDat" AfterTargets="Build" Outputs="%(ThemeFile.Identity)">
+  <Target Name="CreateMainDat" AfterTargets="BeforeBuild" Outputs="%(ThemeFile.Identity)">
       <PropertyGroup>
         <ComponentDir>@(ThemeFile->'%(rootdir)%(directory)')</ComponentDir>
-        <ComponentName>$(ComponentDir.TrimEnd('/'))</ComponentName>
+        <ComponentName>$(ComponentDir.TrimEnd('/').TrimEnd('\'))</ComponentName>
       </PropertyGroup>
-
-        <!-- <Exec Command="echo Q $(ComponentName) QQQQQQQQQQQQQQQQQQ $(ComponentDir)" /> -->
-
-        <ZipDirectory
-            SourceDirectory="$(ComponentDir)"
-            DestinationFile="$(ComponentName).theme"
-            Overwrite="true"
-        />
+        <ZipDirectory SourceDirectory="$(ComponentDir)" DestinationFile="$(ComponentName).dat" Overwrite="true" />
     </Target>
 
 </Project>

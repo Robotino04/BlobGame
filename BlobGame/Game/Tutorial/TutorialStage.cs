@@ -2,7 +2,7 @@
 using BlobGame.Drawing;
 using BlobGame.ResourceHandling;
 using BlobGame.ResourceHandling.Resources;
-using Raylib_CsLo;
+using ZeroElectric.Vinculum;
 using System.Numerics;
 
 namespace BlobGame.Game.Tutorial;
@@ -111,7 +111,7 @@ internal sealed class TutorialStage {
             PositionAnimator = t => PointerAnimationDirection * 10 * -MathF.Sin(MathF.Tau * t)
         };
 
-        Vector2 textSize = Raylib.MeasureTextEx(Renderer.GuiFont.Resource, Text, FONT_SIZE, FONT_SIZE / 16f);
+        Vector2 textSize = Gui.GuiDynamicLabel.CalculateTextSize(FONT_SIZE, Text);
 
         AnimatedSpeechbubble = new AnimatedTexture(
             SpeechbubbleTexture,
@@ -198,14 +198,8 @@ internal sealed class TutorialStage {
 
         AnimatedPointer.Draw();
 
-        Renderer.GuiFont.Draw(
-            Text,
-            FONT_SIZE,
-            ResourceManager.ColorLoader.Get("font_dark"),
-            SpeechBubblePos,
-            new Vector2(0.5f, 0.5f),
-            0,
-            float.MaxValue);
+        Vector2 textSize = Gui.GuiDynamicLabel.CalculateTextSize(FONT_SIZE, Text);
+        Gui.RenderUtils.DrawTextblock(Text, SpeechBubblePos - textSize / 2, FONT_SIZE, ResourceManager.ColorLoader.Get("font_dark").Resource, Renderer.GuiFont.Resource, 0);
     }
 
     private void DrawSpeechBubble() {
@@ -214,7 +208,7 @@ internal sealed class TutorialStage {
 
         AnimatedSpeechbubble.Draw();
 
-        Vector2 textSize = Raylib.MeasureTextEx(Renderer.GuiFont.Resource, Text, FONT_SIZE, FONT_SIZE / 16f);
+        Vector2 textSize = Gui.GuiDynamicLabel.CalculateTextSize(FONT_SIZE, Text);
 
         if (!string.IsNullOrWhiteSpace(Tutorial.AvatarName)) {
             NameTagTexture.Draw(

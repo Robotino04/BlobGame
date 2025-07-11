@@ -121,7 +121,7 @@ internal sealed class MainMenuScene : Scene {
         if (CreditsButton.IsClicked)
             GameManager.SetScene(new CreditsScene());
         if (QuitButton.IsClicked)
-            Application.Exit();
+            Application.Instance.Exit();
         if (LoginButton.IsClicked) {
             UsernameDisplay.Text = "Loading...";
 
@@ -133,7 +133,7 @@ internal sealed class MainMenuScene : Scene {
 
             task.ContinueWith(async (Task _) => {
                 await DiscordAuth.UpdateUserInfo();
-                Application.Settings.DiscordTokensChanged();
+                Application.Instance.Settings.DiscordTokensChanged();
                 UsernameDisplay.Text = DiscordAuth.Username;
 
                 LoginButton.Label.Text = DiscordAuth.IsSignedIn ? "Sign out" : "Sign in with Discord";

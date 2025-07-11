@@ -1,7 +1,7 @@
 ﻿using BlobGame.App;
 using BlobGame.ResourceHandling.Resources;
 using BlobGame.Util;
-using Raylib_CsLo;
+using ZeroElectric.Vinculum;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
@@ -52,7 +52,7 @@ internal static class ResourceManager {
         NPatchTextureLoader = new(ResourceLoadingQueue);
         TextureAtlasLoader = new(ResourceLoadingQueue);
 
-        DefaultTheme = new Theme(Files.GetResourceFilePath("MelbaToast.theme"));
+        DefaultTheme = new Theme(Files.GetResourceFilePath("MelbaToast.dat"));
         MainTheme = DefaultTheme;
     }
 

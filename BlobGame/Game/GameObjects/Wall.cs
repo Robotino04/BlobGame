@@ -1,6 +1,6 @@
 ﻿using nkast.Aether.Physics2D.Common;
 using nkast.Aether.Physics2D.Dynamics;
-using Raylib_CsLo;
+using ZeroElectric.Vinculum;
 
 namespace BlobGame.Game;
 /// <summary>
@@ -44,7 +44,7 @@ internal sealed class Wall : GameObject {
     /// Custom wall drawing logic.
     /// </summary>
     protected internal override void DrawInternal() {
-        if (Application.DRAW_DEBUG)
+        if (Application.Instance.DrawDebug)
             Raylib.DrawRectangleLinesEx(new Rectangle(0, 0, Width, Height), 2, Raylib.WHITE);
     }
 }

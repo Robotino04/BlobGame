@@ -1,7 +1,7 @@
 ﻿using BlobGame.App;
 using BlobGame.ResourceHandling.Resources;
 using BlobGame.Util;
-using Raylib_CsLo;
+using ZeroElectric.Vinculum;
 using System.Numerics;
 
 namespace BlobGame.Game.Gui;

@@ -31,9 +31,6 @@ try {
             if (!args[i].StartsWith("--"))
                 continue;
 
-            if (args[i] == "--debug")
-                Application.DRAW_DEBUG = true;
-
             if (args[i] == "--sockets" &&
                 i + 4 < args.Length &&
                 bool.TryParse(args[i + 1], out useSeparateThreads) &&
@@ -44,8 +41,7 @@ try {
                 socketMode = true;
                 gameModeKey = args[i + 4];
                 i += 4;
-            }
-            else{
+            } else {
                 Console.WriteLine($"Unknown argument: {args[i]}");
                 Console.WriteLine(usage_text);
                 Environment.Exit(1);
@@ -58,8 +54,9 @@ try {
         SocketApplication.Start();
     } else {
         //Application.DRAW_DEBUG = true;  // TODO
-        Application.Initialize();
-        Application.Start();
+        Application app = new("Toasted!", 60, 60);
+        app.Initialize();
+        app.Start();
     }
 } catch (Exception e) {
     StringBuilder sb = new StringBuilder();

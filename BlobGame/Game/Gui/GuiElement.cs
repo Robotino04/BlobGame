@@ -1,4 +1,4 @@
-﻿using Raylib_CsLo;
+﻿using ZeroElectric.Vinculum;
 using System.Numerics;
 
 namespace BlobGame.Game.Gui;
@@ -6,7 +6,7 @@ internal abstract class GuiElement : IEquatable<GuiElement?> {
     private Guid Id { get; }
 
     protected Vector2 Pivot { get; }
-    protected Rectangle Bounds { get; }
+    protected Rectangle Bounds { get; set; }
 
     public bool Enabled { get; set; }
 

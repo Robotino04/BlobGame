@@ -6,7 +6,7 @@ using BlobGame.ResourceHandling.Resources;
 using nkast.Aether.Physics2D.Common;
 using nkast.Aether.Physics2D.Dynamics;
 using nkast.Aether.Physics2D.Dynamics.Contacts;
-using Raylib_CsLo;
+using ZeroElectric.Vinculum;
 using System.Globalization;
 
 namespace BlobGame.Game.GameModes;
