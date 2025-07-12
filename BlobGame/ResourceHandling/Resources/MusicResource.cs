@@ -19,7 +19,7 @@ internal sealed class MusicResource : GameResource<Music> {
 }
 
 internal sealed class MusicResourceLoader : ResourceLoader<Music, MusicResource> {
-    public MusicResourceLoader(BlockingCollection<(string key, Type type)> resourceLoadingQueue)
+    public MusicResourceLoader(ConcurrentQueue<(string key, Type type)> resourceLoadingQueue)
         : base(resourceLoadingQueue) {
     }
 

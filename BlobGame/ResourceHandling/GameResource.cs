@@ -70,7 +70,12 @@ internal abstract class GameResource<T> {
     public void WaitForLoad() {
         while (!IsLoaded) {
             T? r = Resource;
-            Thread.Sleep(1);
+            if (Application.IsBrowser) {
+                // prevents a deadlock
+                ResourceManager.Update();
+            } else {
+                Thread.Sleep(1);
+            }
         }
     }
 }

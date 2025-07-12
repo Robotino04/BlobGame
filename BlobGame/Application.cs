@@ -190,7 +190,7 @@ internal sealed partial class Application {
         // can't call WindowShouldClose in the browser because that uses emscripten_sleep which isn't linked by dotnet
         // it's not like quitting would work anyways
 
-        // no multithreading in wasm wo we just interleave game and render thread
+        // no multithreading in wasm so we just interleave game and render thread
         Instance.Tick(deltaTime);
         Instance.RenderFrame();
 

@@ -120,7 +120,7 @@ internal sealed class NPatchTextureResource : GameResource<NPatchTexture>, IDraw
 }
 
 internal sealed class NPatchTextureResourceLoader : ResourceLoader<NPatchTexture, NPatchTextureResource> {
-    public NPatchTextureResourceLoader(BlockingCollection<(string key, Type type)> resourceLoadingQueue)
+    public NPatchTextureResourceLoader(ConcurrentQueue<(string key, Type type)> resourceLoadingQueue)
         : base(resourceLoadingQueue) {
     }
 

@@ -16,7 +16,7 @@ internal sealed class TextResource : GameResource<IReadOnlyDictionary<string, st
 }
 
 internal sealed class TextResourceLoader : ResourceLoader<IReadOnlyDictionary<string, string>, TextResource> {
-    public TextResourceLoader(BlockingCollection<(string key, Type type)> resourceLoadingQueue)
+    public TextResourceLoader(ConcurrentQueue<(string key, Type type)> resourceLoadingQueue)
         : base(resourceLoadingQueue) {
     }
 

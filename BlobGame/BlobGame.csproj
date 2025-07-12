@@ -29,7 +29,7 @@
     <WasmBuildNative>true</WasmBuildNative>
     <WasmNativeStrip>false</WasmNativeStrip>
     <WasmAllowUndefinedSymbols>true</WasmAllowUndefinedSymbols>
-    <WasmEnableExceptionHandling>false</WasmEnableExceptionHandling>
+    <WasmEnableExceptionHandling>true</WasmEnableExceptionHandling>
     <WasmInitialHeapSize>128MB</WasmInitialHeapSize>
     <WasmEmitSymbolMap>true</WasmEmitSymbolMap>
     <!-- END_WASM_SETTINGS -->

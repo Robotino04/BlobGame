@@ -18,7 +18,7 @@ internal sealed class ColorResource : GameResource<Color> {
 }
 
 internal sealed class ColorResourceLoader : ResourceLoader<Color, ColorResource> {
-    public ColorResourceLoader(BlockingCollection<(string key, Type type)> resourceLoadingQueue)
+    public ColorResourceLoader(ConcurrentQueue<(string key, Type type)> resourceLoadingQueue)
         : base(resourceLoadingQueue) {
     }
 

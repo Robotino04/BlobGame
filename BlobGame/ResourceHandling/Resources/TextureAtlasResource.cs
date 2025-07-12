@@ -68,7 +68,7 @@ internal sealed class TextureAtlasResource : GameResource<TextureAtlas> {
 }
 
 internal sealed class TextureAtlasResourceLoader : ResourceLoader<TextureAtlas, TextureAtlasResource> {
-    public TextureAtlasResourceLoader(BlockingCollection<(string key, Type type)> resourceLoadingQueue)
+    public TextureAtlasResourceLoader(ConcurrentQueue<(string key, Type type)> resourceLoadingQueue)
         : base(resourceLoadingQueue) {
     }
 

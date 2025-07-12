@@ -59,7 +59,7 @@ internal sealed class TextureResource : GameResource<Texture>, IDrawableResource
 }
 
 internal sealed class TextureResourceLoader : ResourceLoader<Texture, TextureResource> {
-    public TextureResourceLoader(BlockingCollection<(string key, Type type)> resourceLoadingQueue)
+    public TextureResourceLoader(ConcurrentQueue<(string key, Type type)> resourceLoadingQueue)
         : base(resourceLoadingQueue) {
     }
 

@@ -39,7 +39,7 @@ internal sealed class FontResource : GameResource<Font> {
 }
 
 internal sealed class FontResourceLoader : ResourceLoader<Font, FontResource> {
-    public FontResourceLoader(BlockingCollection<(string key, Type type)> resourceLoadingQueue)
+    public FontResourceLoader(ConcurrentQueue<(string key, Type type)> resourceLoadingQueue)
         : base(resourceLoadingQueue) {
     }
 

@@ -17,7 +17,7 @@ internal static class ResourceManager {
     /// <summary>
     /// Thread-safe queue of resources to be loaded.
     /// </summary>
-    private static BlockingCollection<(string key, Type type)> ResourceLoadingQueue { get; }
+    private static ConcurrentQueue<(string key, Type type)> ResourceLoadingQueue { get; }
 
     public static ColorResourceLoader ColorLoader { get; }
     public static FontResourceLoader FontLoader { get; }
@@ -41,7 +41,7 @@ internal static class ResourceManager {
     /// Static constructor to initialize the resource loading queue and other required properties.
     /// </summary>
     static ResourceManager() {
-        ResourceLoadingQueue = new BlockingCollection<(string key, Type type)>();
+        ResourceLoadingQueue = new ConcurrentQueue<(string key, Type type)>();
 
         ColorLoader = new(ResourceLoadingQueue);
         FontLoader = new(ResourceLoadingQueue);
@@ -94,7 +94,7 @@ internal static class ResourceManager {
     /// Clears the resource cache and reloads everything.
     /// </summary>
     private static void ReloadResources() {
-        while (ResourceLoadingQueue.TryTake(out _)) ;
+        while (ResourceLoadingQueue.TryDequeue(out _)) ;
 
         Log.WriteLine("Reloading resources.");
         ColorLoader.ReloadAll();
@@ -111,7 +111,7 @@ internal static class ResourceManager {
     /// Called every frame. Checks the resource loading queue and loads resources if needed.
     /// </summary>
     internal static void Update() {
-        while (ResourceLoadingQueue.TryTake(out (string key, Type type) resource, RESOURCE_LOADING_TIMEOUT)) {
+        while (ResourceLoadingQueue.TryDequeue(out (string key, Type type) resource)) {
             //Log.WriteLine($"Loading resource {resource.key} of type {resource.type}");
             LoadResource(resource.key, resource.type);
         }
@@ -145,8 +145,15 @@ internal static class ResourceManager {
     }
 
     public static void WaitForLoading() {
-        while (ResourceLoadingQueue.Count != 0)
-            Thread.Sleep(5);
+        while (ResourceLoadingQueue.Count > 0) {
+            //ResourceLoadingQueue.LogContents();
+            if (Application.IsBrowser) {
+                // prevents a deadlock
+                Update();
+            } else {
+                Thread.Sleep(5);
+            }
+        }
     }
 
     /// <summary>

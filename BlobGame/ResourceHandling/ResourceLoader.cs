@@ -13,7 +13,7 @@ internal abstract class ResourceLoader<TResource, TGameResource> where TGameReso
     /// <summary>
     /// Mirror of the resource loading queue in <see cref="ResourceManager"/>.
     /// </summary>
-    private BlockingCollection<(string key, Type type)> ResourceLoadingQueue { get; }
+    private ConcurrentQueue<(string key, Type type)> ResourceLoadingQueue { get; }
 
     /// <summary>
     /// Loaded resources.
@@ -29,7 +29,7 @@ internal abstract class ResourceLoader<TResource, TGameResource> where TGameReso
     /// </summary>
     internal TGameResource Fallback { get; private set; }
 
-    internal ResourceLoader(BlockingCollection<(string key, Type type)> resourceLoadingQueue) {
+    internal ResourceLoader(ConcurrentQueue<(string key, Type type)> resourceLoadingQueue) {
         ResourceLoadingQueue = resourceLoadingQueue;
 
         Resources = new ConcurrentDictionary<string, (TResource? baseResource, TGameResource resource)>();
@@ -99,7 +99,7 @@ internal abstract class ResourceLoader<TResource, TGameResource> where TGameReso
         if (!IsLoaded(key) && !IsLoading(key)) {
             TGameResource gameResource = Create(key);
             Resources[key] = (default, gameResource);
-            ResourceLoadingQueue.Add((key, typeof(TResource)));
+            ResourceLoadingQueue.Enqueue((key, typeof(TResource)));
         }
     }
 
