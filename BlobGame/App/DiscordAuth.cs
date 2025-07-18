@@ -6,12 +6,14 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Web;
 using Microsoft.CSharp.RuntimeBinder;
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices.JavaScript;
 
 namespace BlobGame.App;
 /// <summary>
 /// Class for managing discord authentication
 /// </summary>
-static internal class DiscordAuth{
+static internal partial class DiscordAuth {
 
     private const string DISCORD_API_ENDPOINT = "https://discord.com/api/v10";
     private const string SCOREBOARD_API_ENDPOINT = "https://robotino.ch/toasted/api";
@@ -33,8 +35,8 @@ static internal class DiscordAuth{
     /// <summary>
     /// Retrieves the username and id for the current tokens.
     /// </summary>
-    internal static async Task UpdateUserInfo(){
-        if (!IsSignedIn){
+    internal static async Task UpdateUserInfo() {
+        if (!IsSignedIn) {
             Username = "No user";
             UserID = "No user";
             return;
@@ -45,7 +47,7 @@ static internal class DiscordAuth{
         request.RequestUri = new Uri(DISCORD_API_ENDPOINT + "/users/@me");
         request.Method = HttpMethod.Get;
         request.Headers.Add("Accept", "*/*");
-        request.Headers.Add("User-Agent", USER_AGENT);
+        //request.Headers.Add("User-Agent", USER_AGENT);
         request.Headers.Add("Authorization", $"Bearer {_Tokens.AccessToken}");
 
         var response = await client.SendAsync(request);
@@ -63,32 +65,31 @@ static internal class DiscordAuth{
     /// Sets the new tokens after testing their validity
     /// </summary>
     /// <param name="newTokens"></param>
-    internal static async Task SetTokens(Tokens newTokens){
-        if (await IsValidToken(newTokens)){
-            _Tokens = newTokens;
-        }
+    internal static void SetTokens(Tokens newTokens) {
+        _Tokens = newTokens;
     }
     /// <summary>
     /// Returns the current tokens and refreshes them if needed.
     /// </summary>
     /// <returns></returns>
-    internal static async Task<Tokens?> GetTokens(){
-        if (_Tokens == null){
+    internal static async Task<Tokens?> GetTokens() {
+        if (_Tokens == null) {
             return null;
         }
-        if (await IsValidToken(_Tokens)){
+        if (await IsValidToken(_Tokens)) {
             return _Tokens;
         }
 
         await RefreshTokens();
+        Console.WriteLine("tokens refreshed");
         return _Tokens;
     }
 
     /// <summary>
     /// Refreshes the access token.
     /// </summary>
-    private static async Task RefreshTokens(){
-        if (_Tokens == null){
+    private static async Task RefreshTokens() {
+        if (_Tokens == null) {
             return;
         }
 
@@ -97,7 +98,7 @@ static internal class DiscordAuth{
         request.RequestUri = new Uri(SCOREBOARD_API_ENDPOINT + "/game/refresh");
         request.Method = HttpMethod.Post;
         request.Headers.Add("Accept", "*/*");
-        request.Headers.Add("User-Agent", USER_AGENT);
+        //request.Headers.Add("User-Agent", USER_AGENT);
         request.Headers.Add("Authorization", $"Bearer {_Tokens.RefreshToken}");
 
         var response = await client.SendAsync(request);
@@ -110,28 +111,46 @@ static internal class DiscordAuth{
     /// </summary>
     /// <param name="tokens">The tokens to test</param>
     /// <returns></returns>
-    private static async Task<bool> IsValidToken(Tokens tokens){
-        if (tokens == null){
+    private static async Task<bool> IsValidToken(Tokens tokens) {
+        if (tokens == null) {
             return false;
         }
-        
+
         var client = new HttpClient();
         var request = new HttpRequestMessage();
         request.RequestUri = new Uri(DISCORD_API_ENDPOINT + "/users/@me");
         request.Method = HttpMethod.Get;
         request.Headers.Add("Accept", "*/*");
-        request.Headers.Add("User-Agent", USER_AGENT);
+        //request.Headers.Add("User-Agent", USER_AGENT);
         request.Headers.Add("Authorization", $"Bearer {tokens.AccessToken}");
 
         var response = await client.SendAsync(request);
         return response.StatusCode == System.Net.HttpStatusCode.OK;
     }
 
+    [SupportedOSPlatform("browser")]
+    [JSImport("openUrl", "main.js")]
+    private static partial void OpenUrlWasm(String url);
+
+    private static void OpenUrl(String url) {
+        Console.WriteLine($"Opening {url}");
+        if (Application.IsBrowser) {
+            OpenUrlWasm(url);
+        } else {
+            Process.Start(new ProcessStartInfo() {
+                UseShellExecute = true,
+                FileName = url,
+            });
+        }
+    }
+
+
+
     /// <summary>
     /// Signs in a user. This will open a browser and communicate with the scoreboard server.
     /// </summary>
-    internal static async Task SignIn(){
-        if (await IsValidToken(_Tokens)){
+    internal static async Task SignIn() {
+        if (await IsValidToken(_Tokens)) {
             return;
         }
 
@@ -141,20 +160,17 @@ static internal class DiscordAuth{
         request.Method = HttpMethod.Get;
 
         request.Headers.Add("Accept", "*/*");
-        request.Headers.Add("User-Agent", USER_AGENT);
+        //request.Headers.Add("User-Agent", USER_AGENT);
 
         var response = await client.SendAsync(request);
         var result = await response.Content.ReadFromJsonAsync<JsonNode>();
         var exchange_token = result["exchange_token"].GetValue<string>();
 
-        Process.Start(new ProcessStartInfo(){
-            UseShellExecute = true,
-            FileName = SCOREBOARD_API_ENDPOINT + "/game/auth?state=" + exchange_token,
-        });
+        OpenUrl(SCOREBOARD_API_ENDPOINT + "/game/auth?state=" + exchange_token);
 
         Tokens tokens = null;
 
-        while (tokens == null){
+        while (tokens == null) {
             await Task.Delay(1000);
 
             request = new HttpRequestMessage();
@@ -162,14 +178,18 @@ static internal class DiscordAuth{
             request.Method = HttpMethod.Post;
 
             request.Headers.Add("Accept", "*/*");
-            request.Headers.Add("User-Agent", USER_AGENT);
+            //request.Headers.Add("User-Agent", USER_AGENT);
 
+            Console.WriteLine("Polling server");
             response = await client.SendAsync(request);
+            Console.WriteLine("response received");
             if (response.StatusCode == System.Net.HttpStatusCode.Accepted)
                 continue;
 
-            if (response.StatusCode == System.Net.HttpStatusCode.OK){
+            if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+                Console.WriteLine("response ok");
                 var result2 = await response.Content.ReadFromJsonAsync<JsonNode>();
+                Console.WriteLine("json decoded");
                 tokens = new Tokens(result2["access_token"].GetValue<string>(), result2["refresh_token"].GetValue<string>());
             }
             break;
@@ -182,8 +202,8 @@ static internal class DiscordAuth{
     /// <summary>
     /// Signs out the user. Also revokes the old tokens.
     /// </summary>
-    internal static async Task SignOut(){
-        if (_Tokens == null){
+    internal static async Task SignOut() {
+        if (_Tokens == null) {
             return;
         }
 
@@ -196,10 +216,9 @@ static internal class DiscordAuth{
         request.Headers.Add("Authorization", $"Bearer {_Tokens.AccessToken}");
 
         var response = await client.SendAsync(request);
-        if (response.StatusCode == System.Net.HttpStatusCode.OK){
+        if (response.StatusCode == System.Net.HttpStatusCode.OK) {
             _Tokens = null;
-        }
-        else{
+        } else {
             var ct = await response.Content.ReadAsStringAsync();
             Console.WriteLine(ct);
         }

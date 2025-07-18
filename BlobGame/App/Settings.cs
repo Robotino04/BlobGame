@@ -2,12 +2,14 @@
 using BlobGame.ResourceHandling;
 using ZeroElectric.Vinculum;
 using System.Text.Json;
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices.JavaScript;
 
 namespace BlobGame.App;
 /// <summary>
 /// Class for managing the game settings
 /// </summary>
-internal sealed class Settings {
+internal sealed partial class Settings {
     /// <summary>
     /// Enum for the different screen modes.
     /// </summary>
@@ -231,11 +233,12 @@ internal sealed class Settings {
     /// <summary>
     /// Saves the settings to a file.
     /// </summary>
-    private void Save() {
+    private async Task Save() {
         string file = Files.GetConfigFilePath("settings.json");
 
-        Task<DiscordAuth.Tokens?> tokenTask = DiscordAuth.GetTokens();
-        tokenTask.Wait();
+        Console.WriteLine("Tokens updated start");
+        DiscordAuth.Tokens? tokens = await DiscordAuth.GetTokens();
+        Console.WriteLine("Tokens updated");
 
         SettingsData settingsData = new SettingsData(
             ScreenMode.ToString(),
@@ -246,10 +249,11 @@ internal sealed class Settings {
             _SoundVolume,
             IsTutorialEnabled,
             ThemeName,
-            tokenTask.Result
+            tokens
         );
 
         File.WriteAllText(file, JsonSerializer.Serialize(settingsData));
+        Console.WriteLine("saved");
     }
 
     /// <summary>
@@ -290,8 +294,9 @@ internal sealed class Settings {
         SoundVolume = soundVolume;
         IsTutorialEnabled = isTutorialEnabled;
         SetTheme(themeName);
-        if (discordTokens != null)
-            DiscordAuth.SetTokens(discordTokens).Wait();
+        if (discordTokens != null) {
+            DiscordAuth.SetTokens(discordTokens);
+        }
         Save();
     }
 
