@@ -37,6 +37,8 @@ If you want the parallel/no-gui version start the .exe with the following argume
 - [Seed] The seed your game uses for spawning objects. Same seed = same order of objects. If multiple games are run, the seed increments from game to game. So game 1 has seed X, game 2 seed X+1, etc.
 - [GameMode] The game mode you want your games to be. Currently there are 2 game modes: 'Classic' and 'Toasted' (capitalization matters).
 
+Note that socket control isn't available in the online version.
+
 
 
 ### Sending Instructions ###

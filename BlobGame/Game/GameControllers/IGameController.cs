@@ -43,11 +43,17 @@ internal interface IGameController {
     /// <summary>
     /// All available game controllers with their keys.
     /// </summary>
-    public static IReadOnlyDictionary<string, Type> ControllerTypes { get; } = new Dictionary<string, Type>() {
-        { "Mouse", typeof(MouseController) },
-        { "Keyboard", typeof(KeyboardController) },
-        { "Socket", typeof(SocketController) }
-    };
+    public static IReadOnlyDictionary<string, Type> ControllerTypes { get; } =
+        Application.IsBrowser
+        ? new Dictionary<string, Type>() {
+            { "Mouse", typeof(MouseController) },
+            { "Keyboard", typeof(KeyboardController) },
+        }
+        : new Dictionary<string, Type>() {
+            { "Mouse", typeof(MouseController) },
+            { "Keyboard", typeof(KeyboardController) },
+            { "Socket", typeof(SocketController) }
+        };
 
     /// <summary>
     /// Creates a new game controlelr instance of the provided type.

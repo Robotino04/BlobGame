@@ -115,11 +115,6 @@ internal sealed partial class Application {
         //Image icon = LoadIcon();
         //Raylib.SetWindowIcon(icon);
 
-        if (!IsBrowser) {
-            // no idea why this crashes WASM. Either its the virtual filesystem or the json parsing
-            Settings.Load();
-        }
-
         Settings.Load();
         ResourceManager.Load();
         AudioManager.Load();

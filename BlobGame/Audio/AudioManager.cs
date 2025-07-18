@@ -102,11 +102,15 @@ internal static class AudioManager {
     /// </summary>
     /// <param name="name">The resource key of the sound to stop playing.</param>
     internal static void StopSound(string name) {
-        if (!PlayingSounds.TryGetValue(name, out SoundResource? sound))
+        if (!PlayingSounds.TryGetValue(name, out SoundResource? sound)) {
             return;
+        }
+
+        // allows unloading the resource and still stoppinig the sound
+        Sound resource = sound.Resource;
 
         SoundActionQueue.Add(() => {
-            Raylib.StopSound(sound.Resource);
+            Raylib.StopSound(resource);
             PlayingSounds.Remove(name, out _);
         });
     }

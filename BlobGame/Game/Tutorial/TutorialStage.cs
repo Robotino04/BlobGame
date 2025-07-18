@@ -148,8 +148,8 @@ internal sealed class TutorialStage {
 
     internal void Unload() {
         if (ResourceManager.SoundLoader.IsLoaded($"{Tutorial.GameModeKey}_tutorial_{StageIndex}")) {
-            ResourceManager.SoundLoader.Get($"{Tutorial.GameModeKey}_tutorial_{StageIndex}").Unload();
             AudioManager.StopSound($"{Tutorial.GameModeKey}_tutorial_{StageIndex}");
+            ResourceManager.SoundLoader.Get($"{Tutorial.GameModeKey}_tutorial_{StageIndex}").Unload();
         }
     }
 
